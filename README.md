@@ -1,6 +1,13 @@
 # Fotor Skills
 
+Current repository version: `v1.0.0`
+
 This repository stores reusable [Agent Skills](https://agentskills.io/home) for Fotor AI.
+
+Version management for this repository is intentionally lightweight:
+
+- `VERSION` is the canonical repository version source.
+- `CHANGELOG.md` is maintained manually to record version history.
 
 ## Current Skill
 
