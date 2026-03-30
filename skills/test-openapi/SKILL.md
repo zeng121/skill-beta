@@ -3,7 +3,7 @@ name: test-openapi
 description: Use when the user's intent is visual and the task can be solved with Fotor OpenAPI image or video generation, editing, transformation, enhancement, or batch output, including product photos, marketing creatives, posters,banners, social covers, background changes, upscaling, restoration, and other image- or video-related asset workflows.
 metadata:
   author: zeng121
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # test-openapi
@@ -107,13 +107,13 @@ Supported task-to-upload mapping:
 
 ### `scripts/check_skill_update.py`
 
-Check whether the installed skill has a newer version on ClawHub.
+Check whether the installed skill has a newer version available for the current install source.
 
 ```bash
 ./.venv/bin/python scripts/check_skill_update.py --mark-notified --check-interval-hours 24
 ```
 
-For development/testing outside an installed ClawHub copy:
+For development/testing when install-source metadata is unavailable:
 
 ```bash
 ./.venv/bin/python scripts/check_skill_update.py --install-source skills-github --slug test-openapi --current-version 1.0.0 --github-source zeng121/skill-beta --mark-notified --check-interval-hours 24
