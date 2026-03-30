@@ -1,19 +1,24 @@
 # Fotor Skills
 
-Current repository version: `v1.0.0`
+Current public skill version: `1.0.0`
 
-This repository stores reusable [Agent Skills](https://agentskills.io/home) for Fotor AI.
+This repository stores reusable [Agent Skills](https://skills.sh/) for Fotor AI.
 
-Version management for this repository is intentionally lightweight:
+## Version Management
 
-- `VERSION` is the canonical repository version source.
-- `CHANGELOG.md` is maintained manually to record version history.
+Version management is intentionally simple and source-aligned:
+
+- `skills/test-openapi/SKILL.md` frontmatter `metadata.version` is the canonical version source for the GitHub / `npx skills` distribution path.
+- ClawHub releases should use the same version number.
+- Git tags should stay aligned with the same version when publishing updates.
+- For the GitHub / `npx skills` path, update notes should be maintained in the repository `CHANGELOG.md`.
+- Avoid maintaining a separate root-level `VERSION` file.
 
 ## Current Skill
 
 ### `test-openapi`
 
-An async-first Python workflow for Fotor OpenAPI using the `fotor-sdk` package.
+An async-first workflow for Fotor OpenAPI using the `fotor-sdk` package.
 
 Current compatibility target: this skill is adapted to `fotor-sdk` `0.1.3`.
 
@@ -28,24 +33,33 @@ It supports:
 - Start/End Frame Interpolation (`start_end_frame2video`)
 - Multiple Image-to-Video (`multiple_image2video`)
 
-The skill includes setup scripts, execution tooling, model references, and parameter documentation.
+The skill includes setup scripts, execution tooling, model references, parameter documentation, and install-source-aware update checking.
 
 ## Repository Structure
 
 ```text
 .
 ├── README.md
-└── test-openapi/
-    ├── SKILL.md
-    ├── agents/
-    │   └── openai.yaml
-    ├── references/
-    │   ├── image_models.md
-    │   ├── parameter_reference.md
-    │   └── video_models.md
-    └── scripts/
-        ├── ensure_sdk.py
-        └── run_task.py
+└── skills/
+    └── test-openapi/
+        ├── SKILL.md
+        ├── agents/
+        ├── references/
+        └── scripts/
+```
+
+## Install
+
+### ClawHub
+
+```bash
+clawhub install test-openapi
+```
+
+### GitHub / `npx skills`
+
+```bash
+npx skills add https://github.com/zeng121/skill-beta.git --skill test-openapi
 ```
 
 ## Quick Start
@@ -53,7 +67,7 @@ The skill includes setup scripts, execution tooling, model references, and param
 1. Enter the skill directory:
 
 ```bash
-cd test-openapi
+cd skills/test-openapi
 ```
 
 2. Upgrade the SDK to the latest version:
@@ -62,17 +76,22 @@ cd test-openapi
 python scripts/ensure_sdk.py
 ```
 
-3. Set your API key:
+3. Configure your API key. Recommended local `.env` setup:
 
 ```bash
-export FOTOR_OPENAPI_KEY="<your_api_key>"
+cat > .env <<'EOF'
+FOTOR_OPENAPI_KEY=<your_api_key>
+EOF
+
+set -a && source .env && set +a
 ```
 
 4. Run a sample task:
 
 ```bash
-echo '{"task_type":"text2image","params":{"prompt":"A cat astronaut","model_id":"seedream-4-5-251128"}}' \
-  | python scripts/run_task.py
+cat <<'EOF' | python scripts/run_task.py
+{"task_type":"text2image","params":{"prompt":"A cat astronaut","model_id":"seedream-4-5-251128"}}
+EOF
 ```
 
 ## Batch Execution
@@ -80,10 +99,12 @@ echo '{"task_type":"text2image","params":{"prompt":"A cat astronaut","model_id":
 You can run multiple tasks in parallel:
 
 ```bash
-echo '[
+cat <<'EOF' | python scripts/run_task.py --concurrency 5
+[
   {"task_type":"text2image","params":{"prompt":"A neon city","model_id":"seedream-4-5-251128"},"tag":"img-1"},
   {"task_type":"text2video","params":{"prompt":"A futuristic skyline","model_id":"kling-v3","duration":5},"tag":"vid-1"}
-]' | python scripts/run_task.py --concurrency 5
+]
+EOF
 ```
 
 ## Input and Output Format
@@ -108,14 +129,18 @@ echo '[
 - `scripts/run_task.py`
   - Runs one or more tasks from stdin or `--input`.
   - Supports `--concurrency`, `--poll-interval`, and `--timeout`.
+- `scripts/check_skill_update.py`
+  - Detects whether the skill was installed via ClawHub or via GitHub / `npx skills`.
+  - Uses the matching version-check backend.
+  - Supports a low-frequency cached update reminder flow.
 
 ## Model and Parameter References
 
 Use these files when selecting models and building parameters:
 
-- `test-openapi/references/image_models.md`
-- `test-openapi/references/video_models.md`
-- `test-openapi/references/parameter_reference.md`
+- `skills/test-openapi/references/image_models.md`
+- `skills/test-openapi/references/video_models.md`
+- `skills/test-openapi/references/parameter_reference.md`
 
 ## Environment Variables
 
@@ -125,8 +150,8 @@ Use these files when selecting models and building parameters:
 ## Common Issues
 
 - `FOTOR_OPENAPI_KEY not set`
-  - Export the key before running `run_task.py`.
-- `Unknown task_type`
+  - Add it to `.env`, source the file, then retry.
+- Unknown `task_type`
   - Use one of the 8 supported task types listed above.
 - Unsupported `model_id` or invalid parameters
   - Cross-check against `references/` docs.
@@ -135,6 +160,7 @@ Use these files when selecting models and building parameters:
 
 When updating this repository:
 
-- Keep task names and parameter examples consistent with `fotor-sdk`.
+- Keep `skills/test-openapi/SKILL.md` `metadata.version` aligned with the published version.
+- Keep GitHub tags / releases and ClawHub releases aligned to the same version.
 - Update reference documents when model lists or capabilities change.
 - Keep runnable command examples in `SKILL.md` and this README aligned.

@@ -1,6 +1,9 @@
 ---
 name: test-openapi
 description: Use when the user's intent is visual and the task can be solved with Fotor OpenAPI image or video generation, editing, transformation, enhancement, or batch output, including product photos, marketing creatives, posters,banners, social covers, background changes, upscaling, restoration, and other image- or video-related asset workflows.
+metadata:
+  author: zeng121
+  version: "1.0.0"
 ---
 
 # test-openapi
@@ -15,7 +18,18 @@ Create a virtual Python environment using any available method, such as `venv`, 
    ```bash
    python scripts/ensure_sdk.py
    ```
-2. **Ensure `FOTOR_OPENAPI_KEY`** is set in environment.
+2. **Ensure `FOTOR_OPENAPI_KEY`** is set in environment. If key setup is missing and the user is not technical, read `references/configure-fotor-openapi-key.md` and prefer the local `.env` happy path instead of listing many alternative methods.
+
+## Interaction Rules
+
+- Speak in user-task language first. Do not lead with SDK, scripts, JSON, model IDs, or parameter tables unless they are needed to unblock the task or the user explicitly asks.
+- Ask for only one missing blocker at a time.
+- Once the minimum required information is present, execute immediately. Do not send vague transition messages like "I’m starting now" unless execution has actually started and a result or clear in-progress status will follow.
+- If execution will take noticeable time, say that the task is running and give a short expectation such as "usually takes a few seconds to a few dozen seconds; I’ll send the result when it’s ready."
+- If credentials are missing, resolve that blocker quickly and then return to the original task instead of turning the conversation into a long setup lesson.
+- Choose the model and default parameters internally unless the user explicitly requests a specific model or technical control.
+- Return the result as soon as it is ready. Do not make the user ask follow-up questions like "where is the image?"
+- If an update reminder is available, keep it to one short non-blocking sentence and continue the current task.
 
 ## Scripts
 
@@ -78,9 +92,40 @@ Supported task-to-upload mapping:
 - `start_end_frame2video` -> `img2video`
 - `multiple_image2video` -> `img2video`
 
+### `scripts/check_skill_update.py`
+
+Check whether the installed skill has a newer version on ClawHub.
+
+```bash
+python scripts/check_skill_update.py --mark-notified --check-interval-hours 24
+```
+
+For development/testing outside an installed ClawHub copy:
+
+```bash
+python scripts/check_skill_update.py --install-source skills-github --slug test-openapi --current-version 1.0.0 --github-source zeng121/skill-beta --mark-notified --check-interval-hours 24
+```
+
+The script:
+
+- Detects the install source first: `clawhub` or `skills-github`
+- For `clawhub`, reads installed `_meta.json` and fetches the latest version via `clawhub inspect <slug> --json`
+- For `skills-github`, reads local `SKILL.md` frontmatter `metadata.version`, finds the GitHub source, and fetches the remote `SKILL.md` version plus `CHANGELOG.md` highlights when available
+- Prints JSON with `install_source`, `current_version`, `latest_version`, `update_available`, and `should_notify`
+- Stores the last-notified version in a local state file when `--mark-notified` is used
+- Caches the last successful version check and supports a minimum recheck interval via `--check-interval-hours` (default 24)
+- Includes `changelog_preview` so the reminder can mention the main highlights without dumping the full changelog
+- Supports development/testing overrides such as `--install-source`, `--slug`, `--current-version`, and `--github-source`
+
+Use it at most once per session (or another low-frequency checkpoint). If `should_notify` is true, send one short non-blocking update reminder and continue the current task.
+
 ## Reference Files
 
-Read these before selecting a model or constructing parameters:
+Only read the reference files that match the current need. Do not load all of them by default.
+
+### Task Execution References
+
+Read these when choosing a model, validating parameters, or mapping an ambiguous user request to a recommended workflow:
 
 - `references/image_models.md` -- image model IDs, T2I/I2I capabilities, per-model parameter constraints (resolution, ratios, input limits, max refs)
 - `references/video_models.md` -- video model IDs, T2V/I2V/SE/MI capabilities, per-model parameter constraints (duration, resolution, ratios, input limits, audio)
@@ -88,17 +133,25 @@ Read these before selecting a model or constructing parameters:
 - `references/image_scenarios.md` -- scenario-to-model mapping for image generation (T2I, I2I, utilities); read when user intent is ambiguous
 - `references/video_scenarios.md` -- scenario-to-model mapping for video generation (T2V, I2V, SE, MI); read when user intent is ambiguous
 
+### Operational References
+
+Read these only when the user asks about installation, upgrade, workspace layout, or credential setup. Do not read them for normal image/video task execution.
+
+- `references/install-or-upgrade.md` -- how to install or upgrade `test-openapi` for both ClawHub and `npx skills`, and how to phrase a concise non-pushy upgrade reminder
+- `references/configure-fotor-openapi-key.md` -- how to set, persist, verify, and safely handle `FOTOR_OPENAPI_KEY`
+
 ## Workflow
 
-1. Run `python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk`.
-2. Verify `FOTOR_OPENAPI_KEY` is set.
-3. For image-based tasks that start from a local file, first run `python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
-4. Read the appropriate model reference to choose `model_id`. Each model's per-model spec section lists supported resolutions, aspect ratios, duration, input constraints, and max reference images.
-5. If user intent is ambiguous (no specific model requested), consult the scenario files (`image_scenarios.md` / `video_scenarios.md`) for recommended model + params.
-6. **Validate parameters** against the chosen model's spec before calling -- check resolution, aspect ratio, duration, and multi-image limits.
-7. **Quick path** -- pipe JSON into `scripts/run_task.py` (works for both single and batch).
-8. **Custom path** -- write inline Python using the SDK directly (see examples below).
-9. Check `result_url` in output. Chain `image_upscale` if higher resolution needed.
+1. On the first use in a session, optionally run `python scripts/check_skill_update.py --mark-notified --check-interval-hours 24`. The script detects whether the skill was installed via ClawHub or via `npx skills`, then uses the matching backend. If it reports `should_notify: true`, read `references/install-or-upgrade.md` before replying so the reminder uses the correct install-source-specific upgrade guidance. Send one short update reminder that may include `changelog_preview`, then continue the task. Do not dump the full changelog into the task flow. Do not auto-upgrade unless the user explicitly asks. If the check fails or times out, ignore it and continue the task without mentioning the failure.
+2. Run `python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk`.
+3. Verify `FOTOR_OPENAPI_KEY` is set.
+4. For image-based tasks that start from a local file, first run `python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
+5. Read the appropriate model reference to choose `model_id`. Each model's per-model spec section lists supported resolutions, aspect ratios, duration, input constraints, and max reference images.
+6. If user intent is ambiguous (no specific model requested), consult the scenario files (`image_scenarios.md` / `video_scenarios.md`) for recommended model + params.
+7. **Validate parameters** against the chosen model's spec before calling -- check resolution, aspect ratio, duration, and multi-image limits.
+8. **Quick path** -- pipe JSON into `scripts/run_task.py` (works for both single and batch).
+9. **Custom path** -- write inline Python using the SDK directly (see examples below).
+10. Check `result_url` in output. Chain `image_upscale` if higher resolution needed.
 
 Built-in automatic fallback mappings:
 
