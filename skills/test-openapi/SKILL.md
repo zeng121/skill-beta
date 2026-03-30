@@ -12,11 +12,23 @@ Async-first Python SDK for the Fotor OpenAPI. No MCP -- just an API key.
 
 ## Setup
 
-Create a virtual Python environment using any available method, such as `venv`, and run the following commands inside it:
+Prefer a local virtual environment in the skill directory. If `.venv` does not exist, create it first, then use the virtualenv interpreter for all bundled scripts instead of the system Python.
+
+Recommended interpreter paths:
+
+- POSIX: `./.venv/bin/python`
+- Windows: `.venv\\Scripts\\python.exe`
+
+Typical setup flow:
+
+```bash
+python3 -m venv .venv
+./.venv/bin/python scripts/ensure_sdk.py
+```
 
 1. **Install or upgrade the latest `fotor-sdk` before every task**
    ```bash
-   python scripts/ensure_sdk.py
+   ./.venv/bin/python scripts/ensure_sdk.py
    ```
 2. **Ensure `FOTOR_OPENAPI_KEY`** is set in environment. If key setup is missing and the user is not technical, read `references/configure-fotor-openapi-key.md` and prefer the local `.env` happy path instead of listing many alternative methods.
 
@@ -27,6 +39,7 @@ Create a virtual Python environment using any available method, such as `venv`, 
 - Once the minimum required information is present, execute immediately. Do not send vague transition messages like "I’m starting now" unless execution has actually started and a result or clear in-progress status will follow.
 - If execution will take noticeable time, say that the task is running and give a short expectation such as "usually takes a few seconds to a few dozen seconds; I’ll send the result when it’s ready."
 - If credentials are missing, resolve that blocker quickly and then return to the original task instead of turning the conversation into a long setup lesson.
+- When running bundled Python scripts locally, prefer a local `.venv`; if it is missing, create it before installing dependencies or executing the task. Avoid installing into the system Python unless the user explicitly asks.
 - Choose the model and default parameters internally unless the user explicitly requests a specific model or technical control.
 - Return the result as soon as it is ready. Do not make the user ask follow-up questions like "where is the image?"
 - If an update reminder is available, keep it to one short non-blocking sentence and continue the current task.
@@ -47,7 +60,7 @@ Execute one or more Fotor tasks from JSON. Handles client init, polling, and pro
 **Single task:**
 ```bash
 echo '{"task_type":"text2image","params":{"prompt":"A cat","model_id":"seedream-4-5-251128"}}' \
-  | python scripts/run_task.py
+  | ./.venv/bin/python scripts/run_task.py
 ```
 
 **Batch (array):**
@@ -55,7 +68,7 @@ echo '{"task_type":"text2image","params":{"prompt":"A cat","model_id":"seedream-
 echo '[
   {"task_type":"text2image","params":{"prompt":"A cat","model_id":"seedream-4-5-251128"},"tag":"cat"},
   {"task_type":"text2video","params":{"prompt":"Sunset","model_id":"kling-v3","duration":5},"tag":"sunset"}
-]' | python scripts/run_task.py --concurrency 5
+]' | ./.venv/bin/python scripts/run_task.py --concurrency 5
 ```
 
 **Options:** `--input FILE`, `--concurrency N` (default 5), `--poll-interval S` (default 2.0), `--timeout S` (default 1200).
@@ -72,7 +85,7 @@ Automatic fallback:
 Upload a local image file through Fotor's signed upload flow and return a reusable image URL.
 
 ```bash
-python scripts/upload_image.py ./input.jpg --task-type image2image
+./.venv/bin/python scripts/upload_image.py ./input.jpg --task-type image2image
 ```
 
 The script:
@@ -97,13 +110,13 @@ Supported task-to-upload mapping:
 Check whether the installed skill has a newer version on ClawHub.
 
 ```bash
-python scripts/check_skill_update.py --mark-notified --check-interval-hours 24
+./.venv/bin/python scripts/check_skill_update.py --mark-notified --check-interval-hours 24
 ```
 
 For development/testing outside an installed ClawHub copy:
 
 ```bash
-python scripts/check_skill_update.py --install-source skills-github --slug test-openapi --current-version 1.0.0 --github-source zeng121/skill-beta --mark-notified --check-interval-hours 24
+./.venv/bin/python scripts/check_skill_update.py --install-source skills-github --slug test-openapi --current-version 1.0.0 --github-source zeng121/skill-beta --mark-notified --check-interval-hours 24
 ```
 
 The script:
@@ -142,15 +155,15 @@ Read these only when the user asks about installation, upgrade, workspace layout
 
 ## Workflow
 
-1. On the first use in a session, optionally run `python scripts/check_skill_update.py --mark-notified --check-interval-hours 24`. The script detects whether the skill was installed via ClawHub or via `npx skills`, then uses the matching backend. If it reports `should_notify: true`, read `references/install-or-upgrade.md` before replying so the reminder uses the correct install-source-specific upgrade guidance. Send one short update reminder that may include `changelog_preview`, then continue the task. Do not dump the full changelog into the task flow. Do not auto-upgrade unless the user explicitly asks. If the check fails or times out, ignore it and continue the task without mentioning the failure.
-2. Run `python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk`.
+1. On the first use in a session, optionally run `./.venv/bin/python scripts/check_skill_update.py --mark-notified --check-interval-hours 24`. The script detects whether the skill was installed via ClawHub or via `npx skills`, then uses the matching backend. If it reports `should_notify: true`, read `references/install-or-upgrade.md` before replying so the reminder uses the correct install-source-specific upgrade guidance. Send one short update reminder that may include `changelog_preview`, then continue the task. Do not dump the full changelog into the task flow. Do not auto-upgrade unless the user explicitly asks. If the check fails or times out, ignore it and continue the task without mentioning the failure.
+2. If `.venv` is missing, create it first. Then run `./.venv/bin/python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk`.
 3. Verify `FOTOR_OPENAPI_KEY` is set.
-4. For image-based tasks that start from a local file, first run `python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
+4. For image-based tasks that start from a local file, first run `./.venv/bin/python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
 5. Read the appropriate model reference to choose `model_id`. Each model's per-model spec section lists supported resolutions, aspect ratios, duration, input constraints, and max reference images.
 6. If user intent is ambiguous (no specific model requested), consult the scenario files (`image_scenarios.md` / `video_scenarios.md`) for recommended model + params.
 7. **Validate parameters** against the chosen model's spec before calling -- check resolution, aspect ratio, duration, and multi-image limits.
-8. **Quick path** -- pipe JSON into `scripts/run_task.py` (works for both single and batch).
-9. **Custom path** -- write inline Python using the SDK directly (see examples below).
+8. **Quick path** -- pipe JSON into `./.venv/bin/python scripts/run_task.py` (works for both single and batch).
+9. **Custom path** -- write inline Python using the SDK directly (see examples below), still preferring the local `.venv` interpreter.
 10. Check `result_url` in output. Chain `image_upscale` if higher resolution needed.
 
 Built-in automatic fallback mappings:
