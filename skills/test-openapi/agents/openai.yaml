@@ -1,0 +1,4 @@
+interface:
+  display_name: "test-openapi"
+  short_description: "Generate and transform media via Fotor OpenAPI"
+  default_prompt: "Use $test-openapi to generate an image from this description."
