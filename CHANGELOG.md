@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.3 - 2026-03-31
+- Align image workflow guidance to default `aspect_ratio="1:1"`
+- Remove image size calculation details from references because the SDK resolves image dimensions internally
+
 ## v1.0.1 - 2026-03-30
 - Add install-source-aware update checking for both ClawHub and GitHub / `npx skills`
 - Add concise non-pushy upgrade guidance via `references/install-or-upgrade.md`

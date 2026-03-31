@@ -228,4 +228,4 @@
 
 **Multi-Reference**: Always verify model's `max_reference_images` capability in `image_models.md` spec before using 2+ images in `image_urls`.
 
-**Aspect Ratio**: Default to `"16:9"` for all image operations.
+**Aspect Ratio**: Default to `"1:1"` for all image operations.

@@ -20,10 +20,6 @@ await text2image(client, *, prompt, model_id, aspect_ratio="1:1", resolution="1k
 | on_poll | Callable | No | `None` | Called each poll cycle with current `TaskResult` |
 | **extra | Any | No | -- | Additional fields merged into the API payload |
 
-**Image size calculation**: The SDK resolves `aspect_ratio` + `resolution` into pixel dimensions automatically.
-Base sizes (1k): `1:1`→1024×1024, `16:9`→1344×768, `9:16`→768×1344, `4:3`→1152×896, `3:4`→896×1152, `3:2`→1216×832, `2:3`→832×1216, `21:9`→1536×640.
-Multipliers: `2k`=2×, `4k`=4×. Default aspect ratio is `1:1`, default resolution is `1k`.
-
 ### image2image
 
 ```python

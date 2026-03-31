@@ -245,13 +245,3 @@
 | Supported Resolution | 1K, 2K |
 | Frames per Request | 1 |
 | Supported Output Ratios | 1:1, 2:3, 3:2, 3:4, 4:3, 9:16, 16:9, 21:9 |
-
----
-
-## Image Size Calculation
-
-The SDK resolves `aspect_ratio` + `resolution` into pixel dimensions automatically.
-
-Base sizes (1k): `1:1`→1024×1024, `16:9`→1344×768, `9:16`→768×1344, `4:3`→1152×896, `3:4`→896×1152, `3:2`→1216×832, `2:3`→832×1216, `21:9`→1536×640.
-
-Multipliers: `2k`=2×, `4k`=4×. Default aspect ratio is `1:1`, default resolution is `1k`.
