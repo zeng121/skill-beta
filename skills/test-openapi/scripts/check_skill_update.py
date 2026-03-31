@@ -353,7 +353,13 @@ def main() -> int:
     if maybe_use_cached(state, now, interval_seconds):
         latest_version = state.get("last_latest_version")
         changelog_preview = state.get("last_changelog_preview")
-        update_available = bool(state.get("last_update_available", False))
+        if latest_version:
+            update_available = parse_semver(latest_version) > parse_semver(current_version)
+        else:
+            update_available = False
+        state["last_current_version"] = current_version
+        state["last_update_available"] = update_available
+        save_state(state_file, state)
         result["used_cache"] = True
     else:
         try:
@@ -371,6 +377,7 @@ def main() -> int:
 
         update_available = parse_semver(latest_version) > parse_semver(current_version)
         state["last_checked_at"] = now
+        state["last_current_version"] = current_version
         state["last_latest_version"] = latest_version
         state["last_changelog_preview"] = changelog_preview
         state["last_update_available"] = update_available

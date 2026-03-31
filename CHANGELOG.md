@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.0.6 - 2026-03-31
+- Recompute `update_available` from cached `latest_version` and the current local version to avoid stale update reminders after upgrading
+
 ## v1.0.5 - 2026-03-31
 - Refine the update-check workflow so it runs silently after `ensure_sdk.py` and is defined only in the workflow section
 - Clarify that `check_skill_update.py` handles cached state, 24-hour rechecks, and duplicate reminder suppression internally
