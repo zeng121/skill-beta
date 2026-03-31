@@ -3,7 +3,7 @@ name: test-openapi
 description: Use when the user's intent is visual and the task can be solved with Fotor OpenAPI image or video generation, editing, transformation, enhancement, or batch output, including product photos, marketing creatives, posters,banners, social covers, background changes, upscaling, restoration, and other image- or video-related asset workflows.
 metadata:
   author: zeng121
-  version: "1.0.3"
+  version: "1.0.4"
 ---
 
 # test-openapi

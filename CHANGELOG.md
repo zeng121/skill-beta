@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.0.4 - 2026-03-31
+- Sync `skills/test-openapi/SKILL.md` metadata version to `1.0.4` to match the current ClawHub release version
+
 ## v1.0.3 - 2026-03-31
 - Align image workflow guidance to default `aspect_ratio="1:1"`
 - Remove image size calculation details from references because the SDK resolves image dimensions internally
