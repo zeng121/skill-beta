@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.5 - 2026-03-31
+- Refine the update-check workflow so it runs silently after `ensure_sdk.py` and is defined only in the workflow section
+- Clarify that `check_skill_update.py` handles cached state, 24-hour rechecks, and duplicate reminder suppression internally
+
 ## v1.0.4 - 2026-03-31
 - Sync `skills/test-openapi/SKILL.md` metadata version to `1.0.4` to match the current ClawHub release version
 

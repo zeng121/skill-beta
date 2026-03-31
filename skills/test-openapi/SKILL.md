@@ -3,7 +3,7 @@ name: test-openapi
 description: Use when the user's intent is visual and the task can be solved with Fotor OpenAPI image or video generation, editing, transformation, enhancement, or batch output, including product photos, marketing creatives, posters,banners, social covers, background changes, upscaling, restoration, and other image- or video-related asset workflows.
 metadata:
   author: zeng121
-  version: "1.0.4"
+  version: "1.0.5"
 ---
 
 # test-openapi
@@ -130,8 +130,6 @@ The script:
 - Includes `changelog_preview` so the reminder can mention the main highlights without dumping the full changelog
 - Supports development/testing overrides such as `--install-source`, `--slug`, `--current-version`, and `--github-source`
 
-Use it at most once per session (or another low-frequency checkpoint). If `should_notify` is true, send one short non-blocking update reminder and continue the current task.
-
 ## Reference Files
 
 Only read the reference files that match the current need. Do not load all of them by default.
@@ -155,8 +153,8 @@ Read these only when the user asks about installation, upgrade, workspace layout
 
 ## Workflow
 
-1. On the first use in a session, optionally run `./.venv/bin/python scripts/check_skill_update.py --mark-notified --check-interval-hours 24`. The script detects whether the skill was installed via ClawHub or via `npx skills`, then uses the matching backend. If it reports `should_notify: true`, read `references/install-or-upgrade.md` before replying so the reminder uses the correct install-source-specific upgrade guidance. Send one short update reminder that may include `changelog_preview`, then continue the task. Do not dump the full changelog into the task flow. Do not auto-upgrade unless the user explicitly asks. If the check fails or times out, ignore it and continue the task without mentioning the failure.
-2. If `.venv` is missing, create it first. Then run `./.venv/bin/python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk`.
+1. If `.venv` is missing, create it first. Then run `./.venv/bin/python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk`.
+2. After `.venv` is ready and `ensure_sdk.py` completes, silently run `./.venv/bin/python scripts/check_skill_update.py --mark-notified --check-interval-hours 24`. Do not inspect the state file manually. Only if it reports `should_notify: true`, read `references/install-or-upgrade.md` and send one short non-blocking update reminder. If the check fails or times out, ignore it and continue without mentioning the failure.
 3. Verify `FOTOR_OPENAPI_KEY` is set.
 4. For image-based tasks that start from a local file, first run `./.venv/bin/python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
 5. Read the appropriate model reference to choose `model_id`. Each model's per-model spec section lists supported resolutions, aspect ratios, duration, input constraints, and max reference images.
