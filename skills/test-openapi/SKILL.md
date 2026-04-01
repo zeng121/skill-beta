@@ -10,27 +10,41 @@ metadata:
 
 Async-first Python SDK for the Fotor OpenAPI. No MCP -- just an API key.
 
+Use `uv` as the skill's bootstrap layer. Prefer a skill-local Python 3.12 environment and run bundled scripts from that local environment instead of the system Python.
+
 ## Setup
 
-Prefer a local virtual environment in the skill directory. If `.venv` does not exist, create it first, then use the virtualenv interpreter for all bundled scripts instead of the system Python.
+Keep setup lightweight and local to the skill directory.
 
-Recommended interpreter paths:
-
-- POSIX: `./.venv/bin/python`
-- Windows: `.venv\\Scripts\\python.exe`
-
-Typical setup flow:
+Install `uv` first if it is missing:
 
 ```bash
-python3 -m venv .venv
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Typical first-run setup:
+
+```bash
+uv python install 3.12
+uv venv --python 3.12 .venv
 ./.venv/bin/python scripts/ensure_sdk.py
 ```
 
-1. **Install or upgrade the latest `fotor-sdk` before every task**
-   ```bash
-   ./.venv/bin/python scripts/ensure_sdk.py
-   ```
-2. **Ensure `FOTOR_OPENAPI_KEY`** is set in environment. If key setup is missing and the user is not technical, read `references/configure-fotor-openapi-key.md` and prefer the local `.env` happy path instead of listing many alternative methods.
+Setup rules:
+
+1. Prefer a local Python 3.12 environment in the skill directory.
+2. Use `uv` to prepare Python 3.12 and create `.venv` when the local environment is missing.
+3. Run bundled scripts from the local skill environment, not the system Python.
+4. Ensure `FOTOR_OPENAPI_KEY` is set. If key setup is missing and the user is not technical, read `references/configure-fotor-openapi-key.md` and prefer the local `.env` happy path.
+
+Current default interpreter paths:
+
+- POSIX: `./.venv/bin/python`
+- Windows: `.venv\\Scripts\\python.exe`
 
 ## Interaction Rules
 
@@ -39,7 +53,7 @@ python3 -m venv .venv
 - Once the minimum required information is present, execute immediately. Do not send vague transition messages like "I’m starting now" unless execution has actually started and a result or clear in-progress status will follow.
 - If execution will take noticeable time, say that the task is running and give a short expectation such as "usually takes a few seconds to a few dozen seconds; I’ll send the result when it’s ready."
 - If credentials are missing, resolve that blocker quickly and then return to the original task instead of turning the conversation into a long setup lesson.
-- When running bundled Python scripts locally, prefer a local `.venv`; if it is missing, create it before installing dependencies or executing the task. Avoid installing into the system Python unless the user explicitly asks.
+- When the local skill environment is missing, prepare it with `uv` before installing dependencies or executing the task. Avoid installing into the system Python unless the user explicitly asks.
 - Choose the model and default parameters internally unless the user explicitly requests a specific model or technical control.
 - Return the result as soon as it is ready. Do not make the user ask follow-up questions like "where is the image?"
 - If an update reminder is available, keep it to one short non-blocking sentence and continue the current task.
@@ -48,7 +62,7 @@ python3 -m venv .venv
 
 ### `scripts/ensure_sdk.py`
 
-Cross-platform (Windows / macOS / Linux) script to install or upgrade `fotor-sdk` to the latest PyPI release. Run before every task.
+Cross-platform (Windows / macOS / Linux) script to install or upgrade `fotor-sdk` to the latest PyPI release with `uv pip install --python <interpreter>`. Run before every task.
 
 - **No args** — install or upgrade to the latest PyPI release
 - **`--upgrade`** — same behavior, kept as an explicit alias
@@ -153,16 +167,19 @@ Read these only when the user asks about installation, upgrade, workspace layout
 
 ## Workflow
 
-1. If `.venv` is missing, create it first. Then run `./.venv/bin/python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk`.
-2. After `.venv` is ready and `ensure_sdk.py` completes, silently run `./.venv/bin/python scripts/check_skill_update.py --mark-notified --check-interval-hours 24`. Do not inspect the state file manually. Only if it reports `should_notify: true`, read `references/install-or-upgrade.md` and send one short non-blocking update reminder. If the check fails or times out, ignore it and continue without mentioning the failure.
-3. Verify `FOTOR_OPENAPI_KEY` is set.
-4. For image-based tasks that start from a local file, first run `./.venv/bin/python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
-5. Read the appropriate model reference to choose `model_id`. Each model's per-model spec section lists supported resolutions, aspect ratios, duration, input constraints, and max reference images.
-6. If user intent is ambiguous (no specific model requested), consult the scenario files (`image_scenarios.md` / `video_scenarios.md`) for recommended model + params.
-7. **Validate parameters** against the chosen model's spec before calling -- check resolution, aspect ratio, duration, and multi-image limits.
-8. **Quick path** -- pipe JSON into `./.venv/bin/python scripts/run_task.py` (works for both single and batch).
-9. **Custom path** -- write inline Python using the SDK directly (see examples below), still preferring the local `.venv` interpreter.
-10. Check `result_url` in output. Chain `image_upscale` if higher resolution needed.
+1. If `uv` is missing, install it first using the platform-appropriate installer shown in Setup.
+2. If Python 3.12 is not already available to `uv`, run `uv python install 3.12`.
+3. If `.venv` is missing, create it with `uv venv --python 3.12 .venv`.
+4. Run `./.venv/bin/python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk` with `uv`.
+5. After `.venv` is ready and `ensure_sdk.py` completes, silently run `./.venv/bin/python scripts/check_skill_update.py --mark-notified --check-interval-hours 24`. Do not inspect the state file manually. Only if it reports `should_notify: true`, read `references/install-or-upgrade.md` and send one short non-blocking update reminder. If the check fails or times out, ignore it and continue without mentioning the failure.
+6. Verify `FOTOR_OPENAPI_KEY` is set.
+7. For image-based tasks that start from a local file, first run `./.venv/bin/python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
+8. Read the appropriate model reference to choose `model_id`. Each model's per-model spec section lists supported resolutions, aspect ratios, duration, input constraints, and max reference images.
+9. If user intent is ambiguous (no specific model requested), consult the scenario files (`image_scenarios.md` / `video_scenarios.md`) for recommended model + params.
+10. **Validate parameters** against the chosen model's spec before calling -- check resolution, aspect ratio, duration, and multi-image limits.
+11. **Quick path** -- pipe JSON into `./.venv/bin/python scripts/run_task.py` (works for both single and batch).
+12. **Custom path** -- write inline Python using the SDK directly (see examples below), still preferring the local `.venv` interpreter.
+13. Check `result_url` in output. Chain `image_upscale` if higher resolution needed.
 
 If the user asks to check account credits or remaining credits, use the SDK client directly instead of `run_task.py`.
 

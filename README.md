@@ -118,7 +118,7 @@ EOF
 ## Scripts
 
 - `scripts/ensure_sdk.py`
-  - Install or upgrade `fotor-sdk`.
+  - Install or upgrade `fotor-sdk` with `uv`.
 - `scripts/upload_image.py`
   - Upload a local image file and return a reusable `file_url`.
 - `scripts/run_task.py`
