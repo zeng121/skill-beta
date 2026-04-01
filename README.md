@@ -67,10 +67,11 @@ npx skills add https://github.com/fotor-ai/fotor-skills.git --skill fotor-skills
 cd skills/fotor-skills
 ```
 
-2. Create a local virtual environment if needed:
+2. Create a local virtual environment with `uv`:
 
 ```bash
-python3 -m venv .venv
+uv python install 3.12
+uv venv --python 3.12 .venv
 ```
 
 3. Upgrade the SDK to the latest version:

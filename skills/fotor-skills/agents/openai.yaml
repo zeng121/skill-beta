@@ -1,4 +1,4 @@
 interface:
   display_name: "fotor-skills"
   short_description: "Generate and transform media via Fotor OpenAPI"
-  default_prompt: "Use $fotor-skills to generate an image from this description."
+  default_prompt: "Use $fotor-skills to generate an image or video from this description."
