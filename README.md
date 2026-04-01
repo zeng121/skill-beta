@@ -1,12 +1,12 @@
 # Fotor Skills
 
-Current public skill version: `1.0.7`
+Current public skill version: `1.0.8`
 
 This repository stores reusable [Agent Skills](https://skills.sh/) for Fotor AI.
 
 ## Version Management
 
-- Keep `skills/fotor-skills/SKILL.md` `metadata.version` aligned with the current published skill version.
+- Keep `skills/fotor-skills/SKILL.md` top-level `version` aligned with the current published skill version.
 - Keep `CHANGELOG.md` updated for GitHub / `npx skills` installs.
 - Avoid a separate root-level `VERSION` file.
 

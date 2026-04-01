@@ -1,9 +1,20 @@
 ---
 name: fotor-skills
 description: Use when the user's intent is visual and the task can be solved with Fotor OpenAPI image or video generation, editing, transformation, enhancement, batch output, or account credit lookup, including product photos, marketing creatives, posters,banners, social covers, background changes, upscaling, restoration, and other image- or video-related asset workflows.
+version: 1.0.8
 metadata:
   author: fotor-ai
-  version: "1.0.7"
+  openclaw:
+    requires:
+      env:
+        - FOTOR_OPENAPI_KEY
+      bins:
+        - uv
+      config:
+        - _meta.json
+        - skills-lock.json
+    primaryEnv: FOTOR_OPENAPI_KEY
+    homepage: https://github.com/fotor-ai/fotor-skills
 ---
 
 # fotor-skills

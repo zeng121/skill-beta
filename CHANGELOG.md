@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.8 - 2026-04-01
+- Align `SKILL.md` frontmatter with ClawHub's documented skill format by using a top-level `version` field
+- Declare `metadata.openclaw` runtime requirements for `FOTOR_OPENAPI_KEY`, `uv`, local config files, and homepage metadata
+
 ## v1.0.7 - 2026-03-31
 - Include `creditsIncrement` in `scripts/run_task.py` output so each task result reports consumed credits
 - Cover account credit lookup in `SKILL.md`, including `get_credits_sync()` usage and the returned `businessId` / `total` / `remaining` fields
