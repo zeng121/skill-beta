@@ -1,7 +1,7 @@
 ---
 name: fotor-skills
-description: Use when the user's intent is visual and the task can be solved with Fotor OpenAPI image or video generation, editing, transformation, enhancement, batch output, or account credit lookup, including product photos, marketing creatives, posters,banners, social covers, background changes, upscaling, restoration, and other image- or video-related asset workflows.
-version: 1.0.9
+description: Use when the user's intent is visual and the task can be solved with Fotor OpenAPI image or video generation, editing, transformation, enhancement, batch output, account credit lookup, or recharge guidance, including product photos, marketing creatives, posters,banners, social covers, background changes, upscaling, restoration, and other image- or video-related asset workflows.
+version: 1.0.10
 metadata:
   author: fotor-ai
   openclaw:
@@ -67,6 +67,8 @@ Current default interpreter paths:
 - When the local skill environment is missing, prepare it with `uv` before installing dependencies or executing the task. Avoid installing into the system Python unless the user explicitly asks.
 - Choose the model and default parameters internally unless the user explicitly requests a specific model or technical control.
 - Return the result as soon as it is ready. Do not make the user ask follow-up questions like "where is the image?"
+- If the user asks how to recharge, buy credits, top up, or purchase tokens, use `references/credits-and-recharge.md` and follow its recharge guidance flow.
+- If a task fails because credits are insufficient, do not stop at the raw error. Use `references/credits-and-recharge.md` to explain the failure and provide recharge guidance.
 - If an update reminder is available, keep it to one short non-blocking sentence and continue the current task.
 
 ## Scripts
@@ -103,6 +105,7 @@ echo '[
 Automatic fallback:
 
 - If a task fails on its primary model and the current `task_type + model_id` matches a built-in fallback mapping, `run_task.py` automatically retries once with the fallback model.
+- If the failure is insufficient credits (`code=510` / `No enough credits`), `run_task.py` returns the failure immediately and does not retry on a fallback model.
 - The output includes `fallback_used`, `original_model_id`, and `fallback_model_id`.
 
 ### `scripts/upload_image.py`
@@ -173,6 +176,7 @@ Read these when choosing a model, validating parameters, or mapping an ambiguous
 
 Read these only when the user asks about installation, upgrade, workspace layout, or credential setup. Do not read them for normal image/video task execution.
 
+- `references/credits-and-recharge.md` -- credit lookup, payment links, recharge guidance, and insufficient-credit handling
 - `references/install-or-upgrade.md` -- how to install or upgrade `fotor-skills` for both ClawHub and `npx skills`, and how to phrase a concise non-pushy upgrade reminder
 - `references/configure-fotor-openapi-key.md` -- how to set, persist, verify, and safely handle `FOTOR_OPENAPI_KEY`
 
@@ -184,15 +188,16 @@ Read these only when the user asks about installation, upgrade, workspace layout
 4. Run `./.venv/bin/python scripts/ensure_sdk.py` before every task to install or upgrade the latest `fotor-sdk` with `uv`.
 5. After `.venv` is ready and `ensure_sdk.py` completes, silently run `./.venv/bin/python scripts/check_skill_update.py --mark-notified --check-interval-hours 24`. Do not inspect the state file manually. Only if it reports `should_notify: true`, read `references/install-or-upgrade.md` and send one short non-blocking update reminder. If the check fails or times out, ignore it and continue without mentioning the failure.
 6. Verify `FOTOR_OPENAPI_KEY` is set.
-7. For image-based tasks that start from a local file, first run `./.venv/bin/python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
-8. Read the appropriate model reference to choose `model_id`. Each model's per-model spec section lists supported resolutions, aspect ratios, duration, input constraints, and max reference images.
-9. If user intent is ambiguous (no specific model requested), consult the scenario files (`image_scenarios.md` / `video_scenarios.md`) for recommended model + params.
-10. **Validate parameters** against the chosen model's spec before calling -- check resolution, aspect ratio, duration, and multi-image limits.
-11. **Quick path** -- pipe JSON into `./.venv/bin/python scripts/run_task.py` (works for both single and batch).
-12. **Custom path** -- write inline Python using the SDK directly (see examples below), still preferring the local `.venv` interpreter.
-13. Check `result_url` in output. Chain `image_upscale` if higher resolution needed.
+7. If the user asks about account credits, recharge, buying credits, or payment links, read `references/credits-and-recharge.md`, then use the appropriate balance or payment-links flow from that reference.
+8. For image-based tasks that start from a local file, first run `./.venv/bin/python scripts/upload_image.py <local-file> --task-type <task-type>` and keep the returned `file_url`.
+9. Read the appropriate model reference to choose `model_id`. Each model's per-model spec section lists supported resolutions, aspect ratios, duration, input constraints, and max reference images.
+10. If user intent is ambiguous (no specific model requested), consult the scenario files (`image_scenarios.md` / `video_scenarios.md`) for recommended model + params.
+11. **Validate parameters** against the chosen model's spec before calling -- check resolution, aspect ratio, duration, and multi-image limits.
+12. **Quick path** -- pipe JSON into `./.venv/bin/python scripts/run_task.py` (works for both single and batch).
+13. **Custom path** -- write inline Python using the SDK directly (see examples below), still preferring the local `.venv` interpreter.
+14. Check `result_url` in output. Chain `image_upscale` if higher resolution needed.
 
-If the user asks to check account credits or remaining credits, use the SDK client directly instead of `run_task.py`.
+If the user asks to check account credits or remaining credits, read `references/credits-and-recharge.md` and use the SDK client flow described there instead of `run_task.py`.
 
 Built-in automatic fallback mappings:
 
@@ -218,27 +223,15 @@ Built-in automatic fallback mappings:
 
 For full parameter details (defaults, `on_poll`, `**extra`), read `references/parameter_reference.md`.
 
-## Credit Lookup
+## Credits and Recharge
 
-For account credit checks such as total credits or remaining credits, use the SDK client directly instead of `run_task.py`.
+For any balance lookup, recharge guidance, or insufficient-credit case, read `references/credits-and-recharge.md`.
 
-```python
-import os
-from fotor_sdk import FotorClient
+Keep `SKILL.md` focused on routing:
 
-client = FotorClient(
-    api_key=os.environ["FOTOR_OPENAPI_KEY"],
-    endpoint=os.environ.get("FOTOR_OPENAPI_ENDPOINT", "https://api-b.fotor.com"),
-)
-credits = client.get_credits_sync()
-print("credits:", credits)
-```
-
-Returns a dict like:
-
-```python
-{"businessId": "", "total": 2000, "remaining": 1973}
-```
+- Use the credits reference when the user asks about remaining balance, total credits, recharge, top-up, or payment links.
+- Use the same reference when a task fails with `code=510` or `No enough credits`.
+- Keep detailed API examples, field meanings, and user-facing recharge wording in the reference instead of expanding this main skill file.
 
 ## Inline Python Examples
 
@@ -297,5 +290,6 @@ result.metadata         # dict (includes "tag" from TaskRunner)
 - **Single task**: catch `FotorAPIError` (has `.code` attribute).
 - **Batch**: check `result.success` per item; runner never raises on individual failures.
 - **NSFW**: appears as `error="NSFW_CONTENT"` in TaskResult.
+- **Insufficient credits**: if `result.error`, exception text, or a combined fallback error contains `code=510` or `No enough credits`, treat it as a recharge case. Tell the user credits are insufficient, then fetch and present payment links.
 
 For troubleshooting, enable SDK debug logging: `logging.getLogger("fotor_sdk").setLevel(logging.DEBUG)`.

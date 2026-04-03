@@ -93,6 +93,12 @@ def _fallback_model_id(task_type: str, model_id: str) -> str:
     return _FALLBACK_MODEL_BY_TASK.get(task_type, {}).get(model_id, "")
 
 
+def _is_insufficient_credits_error(error: FotorAPIError) -> bool:
+    code = str(getattr(error, "code", "") or "")
+    message = str(error)
+    return code == "510" or "No enough credits" in message
+
+
 async def _run_single(client: FotorClient, spec: dict) -> dict:
     task_type = spec.get("task_type", "")
     params = dict(spec.get("params", {}))
@@ -109,6 +115,13 @@ async def _run_single(client: FotorClient, spec: dict) -> dict:
         return d
     except FotorAPIError as e:
         original_model_id = str(params.get("model_id", ""))
+        if _is_insufficient_credits_error(e):
+            return {"task_id": "", "status": "FAILED", "success": False,
+                    "error": f"{e} (code={e.code})", "result_url": None,
+                    "elapsed_seconds": 0, "creditsIncrement": 0, "tag": spec.get("tag", ""),
+                    "fallback_used": False,
+                    "original_model_id": original_model_id,
+                    "fallback_model_id": ""}
         fallback_model_id = _fallback_model_id(task_type, original_model_id)
         if fallback_model_id:
             retry_params = dict(params)

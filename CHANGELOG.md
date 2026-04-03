@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.10 - 2026-04-03
+- Bump the published skill version to `1.0.10`
+- Add recharge guidance to `SKILL.md`, including calling `GET /v1/payment/links` when users ask how to buy credits or top up
+- Consolidate credit lookup and recharge guidance into a single `Credits and Recharge` section in `SKILL.md`
+- Extract detailed credit lookup and recharge behavior into `references/credits-and-recharge.md` so `SKILL.md` stays focused on routing rules
+- Keep the API-returned `urlExpireTime` field in recharge results for internal use, while simplifying user guidance to say payment links are valid for 30 minutes
+- Document that insufficient-credit failures (`code=510` / `No enough credits`) should trigger recharge guidance instead of ending at the raw task error
+- Update `scripts/run_task.py` so insufficient-credit API errors return immediately and do not trigger model fallback retries
+- Add regression coverage for `scripts/run_task.py` to verify that `code=510` skips fallback while non-credit API errors can still retry on fallback models
+
 ## v1.0.9 - 2026-04-02
 - Bump the published skill version to `1.0.9`
 - Align the credit lookup example in `SKILL.md` with the default `FOTOR_OPENAPI_ENDPOINT` value of `https://api-b.fotor.com`
