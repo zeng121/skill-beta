@@ -155,7 +155,7 @@ Use these files when selecting models and building parameters:
 
 When updating this repository:
 
-- Keep `skills/fotor-skills/SKILL.md` `metadata.version` aligned with the published version.
+- Keep `skills/fotor-skills/SKILL.md` top-level `version` aligned with the published version.
 - Keep `CHANGELOG.md` aligned with the published version.
 - Update reference documents when model lists or capabilities change.
 - Keep runnable command examples in `SKILL.md` and this README aligned.

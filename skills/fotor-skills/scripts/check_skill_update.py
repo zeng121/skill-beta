@@ -119,11 +119,15 @@ def parse_frontmatter(path: Path) -> dict[str, Any]:
     return data
 
 
+def skill_version_from_frontmatter(fm: dict[str, Any]) -> str | None:
+    return fm.get("version") or (fm.get("metadata") or {}).get("version")
+
+
 def read_local_skill_metadata() -> dict[str, Any]:
     fm = parse_frontmatter(SKILL_MD_PATH)
     return {
         "slug": fm.get("name") or ROOT.name,
-        "version": (fm.get("metadata") or {}).get("version"),
+        "version": skill_version_from_frontmatter(fm),
         "author": (fm.get("metadata") or {}).get("author"),
     }
 
@@ -227,7 +231,7 @@ def github_remote_skill_version(source: str, slug: str, timeout: float) -> str:
         try:
             tmp.write_text(text, encoding="utf-8")
             fm = parse_frontmatter(tmp)
-            version = (fm.get("metadata") or {}).get("version")
+            version = skill_version_from_frontmatter(fm)
             if version:
                 return version
         finally:
@@ -235,7 +239,7 @@ def github_remote_skill_version(source: str, slug: str, timeout: float) -> str:
                 tmp.unlink()
             except Exception:
                 pass
-    raise RuntimeError(last_error or "Unable to locate remote SKILL.md with metadata.version")
+    raise RuntimeError(last_error or "Unable to locate remote SKILL.md with a version field")
 
 
 def extract_changelog_section(text: str, version: str) -> str | None:
@@ -331,7 +335,7 @@ def main() -> int:
         return 0
 
     if not slug or not current_version:
-        result["error"] = "Missing slug/current version. For skills-github installs, ensure SKILL.md metadata.version exists."
+        result["error"] = "Missing slug/current version. For skills-github installs, ensure SKILL.md has a top-level version field or legacy metadata.version."
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
 

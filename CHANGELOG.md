@@ -2,6 +2,8 @@
 
 ## v1.0.10 - 2026-04-03
 - Bump the published skill version to `1.0.10`
+- Update `scripts/check_skill_update.py` to read the top-level `version` field first and fall back to legacy `metadata.version` for GitHub-based installs
+- Align the update-check documentation in `SKILL.md` and `README.md` with the top-level `version` field
 - Add recharge guidance to `SKILL.md`, including calling `GET /v1/payment/links` when users ask how to buy credits or top up
 - Consolidate credit lookup and recharge guidance into a single `Credits and Recharge` section in `SKILL.md`
 - Extract detailed credit lookup and recharge behavior into `references/credits-and-recharge.md` so `SKILL.md` stays focused on routing rules
