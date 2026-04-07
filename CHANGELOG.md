@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.12 - 2026-04-07
+- Bump the published skill version to `1.0.12`
+- Refresh the `skills/fotor-skills/SKILL.md` description with a broader product-style summary covering AI photo editing, AI video generation, and common marketing and e-commerce asset workflows
+
 ## v1.0.11 - 2026-04-03
 - Bump the published skill version to `1.0.11`
 - Update `scripts/check_skill_update.py` to read the top-level `version` field first and fall back to legacy `metadata.version` for GitHub-based installs

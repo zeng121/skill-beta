@@ -1,7 +1,7 @@
 ---
 name: fotor-skills
-description: Use when the user's intent is visual and the task can be solved with Fotor OpenAPI image or video generation, editing, transformation, enhancement, batch output, account credit lookup, or recharge guidance, including product photos, marketing creatives, posters,banners, social covers, background changes, upscaling, restoration, and other image- or video-related asset workflows.
-version: 1.0.11
+description: An all-in-one AI photo editor and AI video generator for generating, editing, transforming, and enhancing images and videos. Create product photos, ad creatives, marketing visuals, posters, banners, social media graphics, covers, background replacements, restored photos, upscaled images, and batch-generated design assets for e-commerce, content, branding, and marketing workflows.
+version: 1.0.12
 metadata:
   author: fotor-ai
   openclaw:
