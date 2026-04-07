@@ -1,6 +1,6 @@
 # Fotor Skills
 
-Current public skill version: `1.0.11`
+Current public skill version: `1.0.12`
 
 This repository stores reusable [Agent Skills](https://skills.sh/) for Fotor AI.
 
@@ -14,7 +14,7 @@ This repository stores reusable [Agent Skills](https://skills.sh/) for Fotor AI.
 
 ### `fotor-skills`
 
-An async-first workflow for Fotor OpenAPI using the `fotor-sdk` package.
+An all-in-one AI photo editor and AI video generator workflow for generating, editing, transforming, and enhancing images and videos with the `fotor-sdk` package.
 
 SDK compatibility follows the latest `fotor-sdk` release installed by `scripts/ensure_sdk.py`.
 
