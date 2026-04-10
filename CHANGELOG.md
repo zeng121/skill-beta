@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.16 - 2026-04-10
+- Bump the published skill version to `1.0.16`
+- Normalize the Fotor developer homepage URL to include a trailing slash in `skills/fotor-skills/SKILL.md` and `skills/fotor-skills/references/get_api_key.md`
+
 ## v1.0.15 - 2026-04-09
 - Bump the published skill version to `1.0.15`
 - Update GitHub / `npx skills` install commands to use `--copy -y` in `README.md` and `skills/fotor-skills/references/install-or-upgrade.md`

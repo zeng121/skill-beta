@@ -1,7 +1,7 @@
 ---
 name: fotor-skills
-description: An all-in-one AI photo editor and AI video generator for generating, editing, transforming, and enhancing images and videos. Use when the user's intent is visual and the task can be solved with Fotor OpenAPI for image or video generation, editing, transformation, enhancement, product photos, ad creatives, marketing visuals, posters, banners, social media graphics, covers, background replacements, photo restoration, image upscaling, and batch-generated design assets for e-commerce, content, branding, and marketing workflows. For API key application and more `fotor-skills` features, see https://developers.fotor.com/fotor-skills.
-version: 1.0.15
+description: An all-in-one AI photo editor and AI video generator for generating, editing, transforming, and enhancing images and videos. Use when the user's intent is visual and the task can be solved with Fotor OpenAPI for image or video generation, editing, transformation, enhancement, product photos, ad creatives, marketing visuals, posters, banners, social media graphics, covers, background replacements, photo restoration, image upscaling, and batch-generated design assets for e-commerce, content, branding, and marketing workflows. For API key application and more `fotor-skills` features, see https://developers.fotor.com/fotor-skills/.
+version: 1.0.16
 metadata:
   author: fotor-ai
   openclaw:

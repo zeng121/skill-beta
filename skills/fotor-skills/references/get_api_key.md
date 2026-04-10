@@ -17,7 +17,7 @@ Do not start with SDK internals or multiple equivalent credential strategies unl
 When this guide is triggered, also give the official homepage:
 
 ```text
-https://developers.fotor.com/fotor-skills
+https://developers.fotor.com/fotor-skills/
 ```
 
 Use it when the user wants to learn what `fotor-skills` is, what it supports, or wants the product details page during setup.
