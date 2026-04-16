@@ -11,7 +11,7 @@
 ### T2V-1: General Text-to-Video
 **Use Case**: User provides only a text description to generate a video from scratch.
 
-**Model**: `doubao-seedance-1-5-pro` → `text2video`  
+**Model**: `seedance-1-5-pro-251215` → `text2video`
 **Fallback**: `kling-v3` → `text2video`  
 **Params**: `aspect_ratio` as requested, `resolution` per model max
 
@@ -22,7 +22,7 @@
 ### I2V-1: Single Image Animation
 **Use Case**: User provides a single image and wants to animate it or turn it into a video.
 
-**Model**: `doubao-seedance-1-5-pro` → `single_image2video`  
+**Model**: `seedance-1-5-pro-251215` → `single_image2video`
 **Fallback**: `kling-v3` → `single_image2video` (if fails, suggest Multi-Image Reference with similar images)  
 **Params**: `aspect_ratio="16:9"`, `resolution` per model max
 

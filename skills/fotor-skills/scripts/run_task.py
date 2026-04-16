@@ -53,16 +53,15 @@ _TASK_FN = {
 _FALLBACK_MODEL_BY_TASK = {
     "text2image": {
         "gemini-3.1-flash-image-preview": "seedream-5-0-260128",
-        "doubao-seedance-1-5-pro": "kling-v3",
     },
     "image2image": {
         "gemini-3.1-flash-image-preview": "seedream-5-0-260128",
     },
     "text2video": {
-        "doubao-seedance-1-5-pro": "kling-v3",
+        "seedance-1-5-pro-251215": "kling-v3",
     },
     "single_image2video": {
-        "doubao-seedance-1-5-pro": "kling-v3",
+        "seedance-1-5-pro-251215": "kling-v3",
     },
     "start_end_frame2video": {
         "kling-video-o1": "viduq2-turbo",

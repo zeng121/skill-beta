@@ -5,6 +5,9 @@
 ### JetBrains template
 .idea/
 
+# local agent workspace marker
+.codex
+
 # test
 tests/
 
