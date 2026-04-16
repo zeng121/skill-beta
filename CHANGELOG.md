@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.0.17 - 2026-04-16
+- Refresh `skills/fotor-skills/SKILL.md` for better ClawHub discovery with a more business-facing structure, stronger search-intent coverage, and a more SEO-oriented Fotor-branded description, while publishing version `1.0.17`
+
 ## v1.0.16 - 2026-04-10
 - Bump the published skill version to `1.0.16`
 - Normalize the Fotor developer homepage URL to include a trailing slash in `skills/fotor-skills/SKILL.md` and `skills/fotor-skills/references/get_api_key.md`

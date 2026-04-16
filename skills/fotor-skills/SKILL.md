@@ -1,7 +1,7 @@
 ---
 name: fotor-skills
-description: An all-in-one AI photo editor and AI video generator for generating, editing, transforming, and enhancing images and videos. Use when the user's intent is visual and the task can be solved with Fotor OpenAPI for image or video generation, editing, transformation, enhancement, product photos, ad creatives, marketing visuals, posters, banners, social media graphics, covers, background replacements, photo restoration, image upscaling, and batch-generated design assets for e-commerce, content, branding, and marketing workflows. For API key application and more `fotor-skills` features, see https://developers.fotor.com/fotor-skills/.
-version: 1.0.16
+description: Fotor AI image generator and AI video generator for photo editing, background remover, background replacement, product photos, ad creatives, social media graphics, poster and banner design, image upscaling, photo restoration, portrait enhancement, text-to-video, and image-to-video. Built for e-commerce, marketing, branding, and content creation.
+version: 1.0.17
 metadata:
   author: fotor-ai
   openclaw:
@@ -16,11 +16,52 @@ metadata:
 
 # fotor-skills
 
-Async-first Python SDK for the Fotor OpenAPI. No MCP -- just an API key.
+Fotor OpenAPI skill for AI image generation, AI photo editing, AI video generation, product photos, ad creatives, social media graphics, background removal, photo restoration, and image upscaling.
 
-Use `uv` as the skill's bootstrap layer. Prefer a skill-local Python 3.12 environment and run bundled scripts from that local environment instead of the system Python.
+This skill should match user requests expressed in outcome language first, not SDK language. Keep technical details behind the scenes unless they are needed to unblock execution.
 
-## Setup
+## When This Skill Matches
+
+Use this skill when the user asks for outcomes such as:
+
+- Generate AI images from a text prompt
+- Edit or restyle an existing photo
+- Turn a product shot into an e-commerce or ad-ready asset
+- Create posters, banners, covers, thumbnails, or social media graphics
+- Remove or replace an image background
+- Restore, enhance, or upscale a blurry or old photo
+- Generate AI videos from text, one image, multiple images, or start/end frames
+- Batch-produce visual assets for branding, content, or marketing campaigns
+
+## Search Intent Coverage
+
+Common search phrases this skill should be able to match include:
+
+- AI photo editor
+- AI image generator
+- AI video generator
+- Image to image
+- Text to image
+- Text to video
+- Product photo generator
+- Ad creative generator
+- Marketing visual generator
+- Poster maker
+- Banner maker
+- Social media post generator
+- Cover and thumbnail generator
+- Background remover
+- Background replacement
+- Photo restoration
+- Image upscaler
+- E-commerce image generation
+- Brand asset generation
+
+For API key application and product details, see `https://developers.fotor.com/fotor-skills/`.
+
+Use `uv` as the bootstrap layer. Prefer a skill-local Python 3.12 environment and run bundled scripts from that local environment instead of the system Python.
+
+## Runtime Setup
 
 Keep setup lightweight and local to the skill directory.
 
@@ -201,8 +242,8 @@ Built-in automatic fallback mappings:
 
 - `text2image`: `gemini-3.1-flash-image-preview` -> `seedream-5-0-260128`
 - `image2image`: `gemini-3.1-flash-image-preview` -> `seedream-5-0-260128`
-- `text2video`: `doubao-seedance-1-5-pro` -> `kling-v3`
-- `single_image2video`: `doubao-seedance-1-5-pro` -> `kling-v3`
+- `text2video`: `seedance-1-5-pro-251215` -> `kling-v3`
+- `single_image2video`: `seedance-1-5-pro-251215` -> `kling-v3`
 - `start_end_frame2video`: `kling-video-o1` -> `viduq2-turbo`
 - `multiple_image2video`: `kling-v3-omni` -> `kling-video-o1`
 
