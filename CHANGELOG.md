@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.18 - 2026-04-23
+- Bump the published skill version to `1.0.18`
+- Add `gpt-image-2` to the image model references and update eligible image generation / editing scenarios to use it where the documented parameter bounds are satisfied
+- Add `doubao-seedance-2-0-260128` (Seedance 2.0) to the video model references and make it the primary model across the video scenario references
+- Consolidate automatic model fallback mappings into `skills/fotor-skills/references/fallback_models.json` so `run_task.py` and the reference docs share a single fallback source of truth
+
 ## v1.0.17 - 2026-04-16
 - Refresh `skills/fotor-skills/SKILL.md` for better ClawHub discovery with a more business-facing structure, stronger search-intent coverage, and a more SEO-oriented Fotor-branded description, while publishing version `1.0.17`
 
