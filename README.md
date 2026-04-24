@@ -1,6 +1,6 @@
 # Fotor Skills
 
-Current public skill version: `1.0.18`
+Current public skill version: `1.0.19`
 
 This repository stores reusable [Agent Skills](https://skills.sh/) for Fotor AI.
 

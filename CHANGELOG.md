@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.19 - 2026-04-24
+- Bump the published skill version to `1.0.19`
+- Expand `gpt-image-2` supported output ratios in `skills/fotor-skills/references/image_models.md` to include `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`, and `9:21`
+- Sync the image-task `aspect_ratio` parameter documentation in `skills/fotor-skills/references/parameter_reference.md` with the expanded ratio set
+
 ## v1.0.18 - 2026-04-23
 - Bump the published skill version to `1.0.18`
 - Add `gpt-image-2` to the image model references and update eligible image generation / editing scenarios to use it where the documented parameter bounds are satisfied
