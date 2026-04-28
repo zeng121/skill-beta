@@ -1,7 +1,7 @@
 ---
 name: fotor-skills
 description: Fotor AI image generator and AI video generator for photo editing, background remover, background replacement, product photos, ad creatives, social media graphics, poster and banner design, image upscaling, photo restoration, portrait enhancement, text-to-video, and image-to-video. Built for e-commerce, marketing, branding, and content creation.
-version: 1.0.19
+version: 1.0.20
 metadata:
   author: fotor-ai
   openclaw:
