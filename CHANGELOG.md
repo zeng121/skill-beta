@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.20 - 2026-04-28
+- Bump the published skill version to `1.0.20`
+- Document Seedance 2.0 (`doubao-seedance-2-0-260128`) 1080p video output support in the video model references and scenario params.
+
 ## v1.0.19 - 2026-04-24
 - Bump the published skill version to `1.0.19`
 - Expand `gpt-image-2` supported output ratios in `skills/fotor-skills/references/image_models.md` to include `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`, and `9:21`

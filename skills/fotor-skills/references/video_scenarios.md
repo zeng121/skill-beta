@@ -44,4 +44,4 @@
 **Use Case**: User provides multiple images and wants to combine them into a video.
 
 **Model**: `doubao-seedance-2-0-260128` → `multiple_image2video`  
-**Params**: `image_urls` (>=2), `aspect_ratio="16:9"`
+**Params**: `image_urls` (>=2), `aspect_ratio="16:9"`, `resolution` per model max
